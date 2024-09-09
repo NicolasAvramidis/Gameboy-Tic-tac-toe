@@ -1,7 +1,5 @@
 
-An minimal template project with a Makefile that only compiles files in the same directory
+Run tic-tac-toe.gb in a gameboy emulator or on original gameboy hardware
 
-The Makefile will automatically detect and compile new source files as long 
-as they are placed in the same directory as the Makefile
-
+To compile enter command 'make' in the tic-tac-toe directory
 
