@@ -5,7 +5,7 @@
 #include "gameBoardBackground.h"
 #include "gameBoardBackgroundTileset.h"
 #include "windowmap.h"
-#include "gameSprites.h"
+#include "gameSprites2.h"
 #include "title.h"
 #include "game.h"
 #include <gbdk/font.h>
@@ -26,7 +26,7 @@ void main(void){
     font_set(min_font);
 
     //Set Background
-    set_bkg_data(37, 8, backgroundTiles);
+    set_bkg_data(37, 16, backgroundTiles);
     set_bkg_tiles(0, 0, 20, 18, background);
     SHOW_BKG;
     
@@ -35,7 +35,7 @@ void main(void){
     SHOW_WIN;
 
     //Set Sprites
-    set_sprite_data(0, 10, gameSprites);
+    set_sprite_data(0, 12, gameSprites2);
 
     //Create multi-tile selector sprite
     set_sprite_tile(9, BLANK);
@@ -67,6 +67,7 @@ void main(void){
 
 	  
 		// Game main loop processing goes here
+        set_bkg_tiles(0, 0, 20, 18, background);
         set_win_tiles(0,0,11,1, pressStart);
         title_screen();
         gameplay();

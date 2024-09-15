@@ -23,5 +23,13 @@
 #define backgroundBank 0
 
 extern unsigned char background[];
+extern unsigned char diagRight[];
+extern unsigned char diagLeft[];
+extern unsigned char vertLeft[];
+extern unsigned char vertMid[];
+extern unsigned char vertRight[];
+extern unsigned char horTop[];
+extern unsigned char horMid[];
+extern unsigned char horBot[];
 
 /* End of GAMEBOARDBACKGROUND.H */

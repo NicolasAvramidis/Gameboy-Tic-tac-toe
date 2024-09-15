@@ -4,12 +4,13 @@
 #include <gb/gb.h>
 #include "gameBoardBackground.h"
 #include "gameBoardBackgroundTileset.h"
-#include "gameSprites.h"
+#include "gameSprites2.h"
 #include "windowmap.h"
 
 int GAME_BOARD[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
 int CURSOR_X = 0;
 int CURSOR_Y = 0;
+int cpuFirstTurn = 1;
 
 void clearBoard(void){
     for(int i = 0; i < 3; i++){
@@ -23,23 +24,57 @@ int validMove(int x, int y){
      return (GAME_BOARD[x][y] != 0) ? 0 : 1;
 }
 
-int checkGameOVER(void){
+int checkGameOVER(int realCheck){
     
 
     for (int i = 0; i < 3; i++) {
         if (GAME_BOARD[i][0] != 0 && GAME_BOARD[i][0] == GAME_BOARD[i][1] && GAME_BOARD[i][1] == GAME_BOARD[i][2]) {
+            if(realCheck){
+                switch (i)
+                {
+                case 0:
+                    set_bkg_tiles(0, 0, 20, 18, vertLeft);
+                    break;
+                case 1:
+                    set_bkg_tiles(0, 0, 20, 18, vertMid);
+                    break;
+                case 2:
+                    set_bkg_tiles(0, 0, 20, 18, vertRight);
+                    break;
+                }
+            }
             return GAME_BOARD[i][0];
         }
         if (GAME_BOARD[0][i] != 0 && GAME_BOARD[0][i] == GAME_BOARD[1][i] && GAME_BOARD[1][i] == GAME_BOARD[2][i]) {
+            if(realCheck){
+                switch (i)
+                {
+                case 0:
+                    set_bkg_tiles(0, 0, 20, 18, horTop);
+                    break;
+                case 1:
+                    set_bkg_tiles(0, 0, 20, 18, horMid);
+                    break;
+                case 2:
+                    set_bkg_tiles(0, 0, 20, 18, horBot);
+                    break;
+                }
+            }
             return GAME_BOARD[0][i];
         }
     }
 
     // Check diagonals for a win
     if (GAME_BOARD[0][0] != 0 && GAME_BOARD[0][0] == GAME_BOARD[1][1] && GAME_BOARD[1][1] == GAME_BOARD[2][2]) {
+        if(realCheck){
+            set_bkg_tiles(0, 0, 20, 18, diagLeft);
+        }
         return GAME_BOARD[0][0];
     }
     if (GAME_BOARD[0][2] != 0 && GAME_BOARD[0][2] == GAME_BOARD[1][1] && GAME_BOARD[1][1] == GAME_BOARD[2][0]) {
+        if(realCheck){
+            set_bkg_tiles(0, 0, 20, 18, diagRight);
+        }
         return GAME_BOARD[0][2];
     }
 
@@ -60,18 +95,116 @@ int checkGameOVER(void){
     return 0;
 }
 
-void cpuTurn(void){
-    while(1){
-        int randX = rand() % 3;
-        int randY = rand() % 3;
-        if(validMove(randX, randY)){
-            GAME_BOARD[randX][randY] = 2;
-            set_sprite_tile(randX+3*randY, PLAYERO);
-            break;
+int minimax(int depth, int isMaximizing, int alpha, int beta) {
+    // Check if move ends game
+    int result = checkGameOVER(0);
+    int player;
+    int bestScore;
+
+    // If x wins
+    if (result == 1) {
+        return -1;
+    }
+    // If o wins
+    if (result == 2) {
+        return 1;
+    }
+    // If tie
+    if (result == 3) {
+        return 0;
+    }
+
+    // Game not over
+    if (isMaximizing) {
+        player = 2;
+        bestScore = -1;
+    } else {
+        player = 1;
+        bestScore = 1000;
+    }
+
+    for (int x = 0; x < 3; x++) {
+        for (int y = 0; y < 3; y++) {
+            if (validMove(x, y)) {
+                GAME_BOARD[x][y] = player;
+                int score = minimax(depth + 1, 1 ^ isMaximizing, alpha, beta);
+                GAME_BOARD[x][y] = 0;
+
+                if (isMaximizing) {
+                    if (score > bestScore) {
+                        bestScore = score;
+                    }
+                    alpha = (alpha > bestScore) ? alpha : bestScore;
+                } else {
+                    if (score < bestScore) {
+                        bestScore = score;
+                    }
+                    beta = (beta < bestScore) ? beta : bestScore;
+                }
+
+                // Alpha-beta pruning
+                if (beta <= alpha) {
+                    return bestScore;
+                }
+            }
         }
     }
-    
+    return bestScore;
 }
+
+void cpuTurnBest(void) {
+    int bestScore = -1;
+    int bestx = 1;
+    int besty = 0;
+    if (cpuFirstTurn && GAME_BOARD[1][1] == 0) {
+        cpuFirstTurn = 0;
+        GAME_BOARD[1][1] = 2;
+        set_sprite_tile(1 + 3 * 1, PLAYERO);
+        return;
+    }
+    if (cpuFirstTurn) {
+        cpuFirstTurn = 0;
+        int randNumber = rand() % 4;
+        switch (randNumber)
+        {
+        case 0:
+            GAME_BOARD[0][0] = 2;
+            set_sprite_tile(0 + 3 * 0, PLAYERO);
+            break;
+        case 1:
+            GAME_BOARD[0][2] = 2;
+            set_sprite_tile(0 + 3 * 2, PLAYERO);
+            break;
+        case 2:
+            GAME_BOARD[2][0] = 2;
+            set_sprite_tile(2 + 3 * 0, PLAYERO);
+            break;
+        case 3:
+            GAME_BOARD[2][2] = 2;
+            set_sprite_tile(2 + 3 * 2, PLAYERO);
+            break;
+        }
+        return;
+    }
+    for (int x = 0; x < 3; x++) {
+        for (int y = 0; y < 3; y++) {
+            if (validMove(x, y)) {
+                GAME_BOARD[x][y] = 2;
+                int score = minimax(0, 0, -1, 1);
+                GAME_BOARD[x][y] = 0;
+
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestx = x;
+                    besty = y;
+                }
+            }
+        }
+    }
+    GAME_BOARD[bestx][besty] = 2;
+    set_sprite_tile(bestx + 3 * besty, PLAYERO);
+}
+
 
 void playerTurn(void){
     int key;
@@ -129,6 +262,7 @@ void gameplay(void){
     clearBoard();
     CURSOR_X = 0;
     CURSOR_Y = 0;
+    cpuFirstTurn = 1;
 
     for(int i = 0; i < 9; i++){
         set_sprite_tile(i, BLANK);
@@ -136,24 +270,24 @@ void gameplay(void){
 
     while(1){
         playerTurn();
-        if(checkGameOVER()){
+        if(checkGameOVER(1)){
              break;
         }
-        cpuTurn();
-        if(checkGameOVER()){
+        cpuTurnBest();
+        if(checkGameOVER(1)){
              break;
         }
 
     }
 
-    if(checkGameOVER() == 1){
+    if(checkGameOVER(1) == 1){
         set_win_tiles(0,0,11,1, playerWins);
     }
 
-     if(checkGameOVER() == 2){
+     if(checkGameOVER(1) == 2){
         set_win_tiles(0,0,11,1, cpuWins);
     }
-    if(checkGameOVER() == 3){
+    if(checkGameOVER(1) == 3){
         set_win_tiles(0,0,11,1, tiedGame);
     }
     

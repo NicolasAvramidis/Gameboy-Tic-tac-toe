@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "gameBoardBackground.h"
 #include "gameBoardBackgroundTileset.h"
-#include "gameSprites.h"
+#include "gameSprites2.h"
 
 void title_screen(void){
     set_sprite_tile(0, LETTERT);

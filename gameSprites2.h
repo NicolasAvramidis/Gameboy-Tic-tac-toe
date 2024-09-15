@@ -1,6 +1,6 @@
 /*
 
- GAMEBOARDBACKGROUNDTILESET.H
+ GAMESPRITES2.H
 
  Include File.
 
@@ -10,7 +10,7 @@
   Compression          : None.
   Counter              : None.
   Tile size            : 8 x 8
-  Tiles                : 0 to 15
+  Tiles                : 0 to 12
 
   Palette colors       : None.
   SGB Palette          : None.
@@ -24,8 +24,21 @@
 
 
 /* Bank of tiles. */
-#define backgroundTilesBank 0
+#define gameSprites2Bank 0
+#define BLANK 0
+#define PLAYERX 1
+#define PLAYERO 2
+#define LETTERT 3
+#define LETTERI 4
+#define LETTERC 5
+#define LETTERA 6
+#define LETTERO 7
+#define LETTERE 8
+#define SELECT 9
+#define VERT 10
+#define HOR 11
+#define DIAG 12
 /* Start of tile array. */
-extern unsigned char backgroundTiles[];
+extern unsigned char gameSprites2[];
 
-/* End of GAMEBOARDBACKGROUNDTILESET.H */
+/* End of GAMESPRITES2.H */
