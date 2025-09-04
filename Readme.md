@@ -5,9 +5,10 @@ Tic tac toe game for Nintendo Gameboy made in C with GBDK (GameBoy Development K
 
 Tic-Tac-Toe.gb file is playable on original GameBoy hardware or on any GameBoy emulator.
 
-AI player uses minimax algorythm that ensures the AI either wins or ties the game. Also uses alpha beta pruning to optimize minimax as base algorythm runtime was not acceptable on gameboy hardware. 
+AI player uses minimax algorithm that ensures the AI either wins or ties the game. Also uses alpha beta pruning to optimize minimax as base algorythm runtime was not acceptable on gameboy hardware. 
 
 Compile with command 'make' in this directory. The Makefile will automatically detect and compile new source files as long 
 as they are placed in the same directory as the Makefile
+
 
 
